@@ -6,7 +6,7 @@ const records = [1, 4, 2, 3].map((day) => ({
   title: `Browser story ${day}`,
   content: `Saved browser text ${day}. ` + 'x'.repeat(130),
   createdAt: `2026-05-0${day}T12:00:00Z`,
-  authorId: 'demo-author',
+  authorId: day === 4 ? 'default-admin' : 'demo-author',
   authorName: 'Demo Writer',
 }));
 
@@ -18,7 +18,15 @@ test('guest sees newest local previews, follows a reader link and returns withou
   await expect(latest.getByRole('heading', { level: 3 })).toHaveText(['Browser story 4', 'Browser story 3', 'Browser story 2']);
   await expect(latest.getByText('May 04, 2026')).toBeVisible();
   await expect(latest.getByText('Demo Writer')).toHaveCount(3);
-  await expect(latest.getByText('Saved browser text 4. ' + 'x'.repeat(99))).toBeVisible();
+  const newest = latest.getByRole('article').filter({ has: page.getByRole('link', { name: 'Browser story 4' }) });
+  // The literal prefix is 22 characters, leaving 98 of the 120-character contract.
+  const prefix = 'Saved browser text 4. ';
+  expect(prefix.length).toBe(22);
+  const excerpt = newest.locator('p');
+  await expect(excerpt).toHaveText(prefix + 'x'.repeat(98));
+  expect((await excerpt.textContent()).length).toBe(120);
+  await expect(newest.getByRole('img', { name: 'Admin', exact: true })).toBeVisible();
+  await expect(newest.getByRole('img', { name: 'User', exact: true })).toHaveCount(0);
   await page.screenshot({ path: testInfo.outputPath('discovery-desktop.png'), fullPage: true });
   await latest.getByRole('link', { name: 'Browser story 4' }).click();
   await expect(page).toHaveURL(/\/login$/);
@@ -53,5 +61,31 @@ test('mobile guest opens navigation, follows entry links and sees exact corrupt-
   await page.reload();
   await expect(page.getByText('No posts yet — check back soon!')).toBeVisible();
   expect(await page.evaluate(() => localStorage.getItem('writespace_posts'))).toBe('{broken');
+  expect(browserErrors).toEqual([]);
+});
+
+test('guest clicks alternate discovery entries and returns Home', async ({ page, browserErrors }) => {
+  await page.goto('/');
+  const footer = page.getByRole('navigation', { name: 'Footer' });
+  for (const [link, path, heading] of [
+    ['All Blogs', /\/login$/, 'Login'],
+    ['Register', /\/register$/, 'Register'],
+    ['Login', /\/login$/, 'Login'],
+  ]) {
+    await footer.getByRole('link', { name: link, exact: true }).click();
+    await expect(page).toHaveURL(path);
+    await expect(page.getByRole('heading', { name: heading, exact: true })).toBeVisible();
+    await page.getByRole('link', { name: 'Back to Home' }).click();
+    await expect(page).toHaveURL(/\/$/);
+    await expect(page.getByRole('heading', { name: 'WriteSpace', level: 1 })).toBeVisible();
+  }
+  await page.getByRole('navigation', { name: 'Primary' }).getByRole('link', { name: 'Get Started', exact: true }).click();
+  await expect(page).toHaveURL(/\/register$/);
+  await expect(page.getByRole('heading', { name: 'Register', exact: true })).toBeVisible();
+  await page.getByRole('link', { name: 'Back to Home' }).click();
+  await footer.getByRole('link', { name: 'Home', exact: true }).click();
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.getByRole('heading', { name: 'WriteSpace', level: 1 })).toBeVisible();
+  await expect(page.getByRole('region', { name: 'Latest from the Blog' })).toBeVisible();
   expect(browserErrors).toEqual([]);
 });

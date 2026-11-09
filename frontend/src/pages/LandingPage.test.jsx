@@ -76,6 +76,54 @@ describe('landing discovery', () => {
     await user.click(screen.getByRole('link', { name, exact: true }));
     expect(screen.getByRole('heading', { name: `Test target ${path}` })).toBeInTheDocument();
   });
+  it.each([
+    ['fixed Admin', 'default-admin', [], 'Admin', 'bg-violet-600'],
+    ['managed Admin', 'managed-admin', [{
+      id: 'managed-admin', displayName: 'Ari', username: 'ari', password: 'demo-only',
+      role: 'admin', createdAt: '2026-05-01T12:00:00Z',
+    }], 'Admin', 'bg-violet-600'],
+    ['missing author', 'deleted-author', [], 'User', 'bg-indigo-500'],
+  ])('renders the %s preview role without writing storage', (_, authorId, users, label, color) => {
+    const postsRaw = JSON.stringify([{ ...post, authorId }]);
+    const usersRaw = JSON.stringify(users);
+    localStorage.setItem('writespace_posts', postsRaw);
+    localStorage.setItem('writespace_users', usersRaw);
+    const write = vi.spyOn(Storage.prototype, 'setItem');
+    renderLanding();
+    const latest = screen.getByRole('region', { name: 'Latest from the Blog' });
+    expect(within(latest).getByRole('img', { name: label })).toHaveClass(color);
+    expect(within(latest).queryByRole('img', { name: label === 'Admin' ? 'User' : 'Admin' })).not.toBeInTheDocument();
+    expect(within(latest).getByText('Mira')).toBeInTheDocument();
+    expect(localStorage.getItem('writespace_posts')).toBe(postsRaw);
+    expect(localStorage.getItem('writespace_users')).toBe(usersRaw);
+    expect(write).not.toHaveBeenCalled();
+  });
+  it.each(['{broken', '{}', '[null]'])('falls back to User for corrupt author accounts without repair: %s', (raw) => {
+    localStorage.setItem('writespace_posts', JSON.stringify([post]));
+    localStorage.setItem('writespace_users', raw);
+    const write = vi.spyOn(Storage.prototype, 'setItem');
+    renderLanding();
+    const latest = screen.getByRole('region', { name: 'Latest from the Blog' });
+    expect(within(latest).getByRole('img', { name: 'User' })).toBeInTheDocument();
+    expect(localStorage.getItem('writespace_users')).toBe(raw);
+    expect(write).not.toHaveBeenCalled();
+  });
+  it('keeps previews and User fallback when only account reads are denied', () => {
+    const postsRaw = JSON.stringify([post]);
+    localStorage.setItem('writespace_posts', postsRaw);
+    const getItem = Storage.prototype.getItem;
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(function (key) {
+      if (key === 'writespace_users') throw new Error('blocked');
+      return getItem.call(this, key);
+    });
+    const write = vi.spyOn(Storage.prototype, 'setItem');
+    renderLanding();
+    const latest = screen.getByRole('region', { name: 'Latest from the Blog' });
+    expect(within(latest).getByRole('link', { name: post.title })).toBeInTheDocument();
+    expect(within(latest).getByRole('img', { name: 'User' })).toBeInTheDocument();
+    expect(localStorage.getItem('writespace_posts')).toBe(postsRaw);
+    expect(write).not.toHaveBeenCalled();
+  });
   it.each(['Home', 'All Blogs', 'Login', 'Register'])('footer %s has its contracted destination', (name) => {
     renderLanding();
     const footer = screen.getByRole('navigation', { name: 'Footer' });
@@ -162,6 +210,35 @@ describe('shared preview and avatars', () => {
 });
 
 describe('actual route shell', () => {
+  it.each([
+    ['Footer', 'All Blogs', 'Login'], ['Footer', 'Register', 'Register'],
+    ['Footer', 'Login', 'Login'], ['Primary', 'Get Started', 'Register'],
+  ])('clicks %s %s to the guest %s page and returns Home', async (navigation, link, heading) => {
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <App />
+      </MemoryRouter>,
+    );
+    const nav = screen.getByRole('navigation', { name: navigation });
+    await user.click(within(nav).getByRole('link', { name: link, exact: true }));
+    expect(screen.getByRole('heading', { name: heading, exact: true })).toBeInTheDocument();
+    await user.click(screen.getByRole('link', { name: 'Back to Home' }));
+    expect(screen.getByRole('heading', { name: 'WriteSpace', level: 1 })).toBeInTheDocument();
+    expect(screen.getByRole('navigation', { name: 'Footer' })).toBeInTheDocument();
+  });
+  it('clicks footer Home and remains on discovery', async () => {
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <App />
+      </MemoryRouter>,
+    );
+    const footer = screen.getByRole('navigation', { name: 'Footer' });
+    await user.click(within(footer).getByRole('link', { name: 'Home', exact: true }));
+    expect(screen.getByRole('heading', { name: 'WriteSpace', level: 1 })).toBeInTheDocument();
+    expect(screen.getByRole('region', { name: 'Latest from the Blog' })).toBeInTheDocument();
+  });
   it('reads existing identity for discovery and fails closed when identity becomes malformed', () => {
     localStorage.setItem('writespace_session', JSON.stringify({ ...session, role: 'admin' }));
     const { rerender } = render(

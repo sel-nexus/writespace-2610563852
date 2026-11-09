@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { BookOpen, LockKeyhole, Zap } from 'lucide-react';
 import { PublicNavbar, sessionPropType } from '../components/PublicNavbar';
 import { BlogCard } from '../components/BlogCard';
-import { getPosts } from '../utils/storage';
+import { getPosts, getUsers } from '../utils/storage';
 import { getLatestPosts } from '../utils/posts';
 
 const features = [
@@ -14,14 +14,18 @@ const features = [
 ];
 const action = 'inline-flex min-h-11 items-center justify-center rounded-lg px-6 py-3 font-medium focus-visible:ring-2 focus-visible:ring-indigo-500';
 
-/** Render discovery from a single mounted collection snapshot.
+/** Render discovery from mounted posts and guarded account snapshots.
  * Args:
  *   session: Validated identity for entry links, or null for a guest.
  * Returns:
  *   Responsive landing, feature regions, latest previews and footer.
+ * Notes:
+ *   Fixed Admin authors retain their role; missing accounts use the User mark.
+ *   Reading previews never repairs or writes browser storage.
  */
 export default function LandingPage({ session = null }) {
   const [posts] = useState(() => getLatestPosts(getPosts()));
+  const [users] = useState(() => getUsers());
   return (
     <>
       <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:z-30 focus:bg-white focus:p-4">Skip to content</a>
@@ -67,7 +71,12 @@ export default function LandingPage({ session = null }) {
           {posts.length ? (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {posts.map((post, index) => (
-                <BlogCard key={post.id} post={post} index={index} />
+                <BlogCard
+                  key={post.id}
+                  post={post}
+                  index={index}
+                  authorRole={post.authorId === 'default-admin' ? 'admin' : users.find((user) => user.id === post.authorId)?.role || 'user'}
+                />
               ))}
             </div>
           ) : (
