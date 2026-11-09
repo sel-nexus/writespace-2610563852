@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { Link, NavLink } from 'react-router-dom';
 import { BookOpen, Menu, X } from 'lucide-react';
 import { Avatar } from './Avatar';
+import { roleHome } from '../utils/auth';
 
 const linkStyle = 'rounded-lg px-4 py-3 font-medium hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500';
 export const sessionPropType = PropTypes.shape({
@@ -21,7 +22,7 @@ export const sessionPropType = PropTypes.shape({
  */
 export function PublicNavbar({ session = null }) {
   const [open, setOpen] = useState(false);
-  const dashboard = session?.role === 'admin' ? '/admin' : '/blogs';
+  const dashboard = roleHome(session);
   return (
     <header className="sticky top-0 z-20 border-b border-slate-200 bg-white">
       <nav aria-label="Primary" className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-4">

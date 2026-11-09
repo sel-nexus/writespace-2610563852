@@ -21,8 +21,8 @@ test('guest sees newest local previews, follows a reader link and returns withou
   await expect(latest.getByText('Saved browser text 4. ' + 'x'.repeat(99))).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath('discovery-desktop.png'), fullPage: true });
   await latest.getByRole('link', { name: 'Browser story 4' }).click();
-  await expect(page).toHaveURL(/\/blog\/post-4$/);
-  await expect(page.getByRole('heading', { name: 'Page not found' })).toBeVisible();
+  await expect(page).toHaveURL(/\/login$/);
+  await expect(page.getByRole('heading', { name: 'Login' })).toBeVisible();
   await page.getByRole('link', { name: 'Back to Home' }).click();
   await expect(latest.getByRole('link', { name: 'Browser story 4' })).toBeVisible();
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem('writespace_posts')))).toEqual(records);
@@ -41,7 +41,7 @@ test('mobile guest opens navigation, follows entry links and sees exact corrupt-
   await page.screenshot({ path: testInfo.outputPath('discovery-mobile-menu.png'), fullPage: true });
   await primary.getByRole('link', { name: 'Login' }).click();
   await expect(page).toHaveURL(/\/login$/);
-  await expect(page.getByRole('heading', { name: 'Page not found' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Login' })).toBeVisible();
   await page.getByRole('link', { name: 'Back to Home' }).click();
   await expect(page.getByRole('button', { name: 'Open menu' })).toHaveAttribute('aria-expanded', 'false');
   await page.getByRole('link', { name: 'Get Started Free' }).click();

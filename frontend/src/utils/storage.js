@@ -1,7 +1,7 @@
 /** Contain browser persistence failures without rewriting unreadable records.
  * Notes:
  *   Users contain plaintext demo passwords. Never use real credentials.
- *   Landing session reads only select entry links, not trusted authorization.
+
  */
 export const STORAGE_KEYS = {
   posts: 'writespace_posts',
@@ -11,7 +11,7 @@ export const STORAGE_KEYS = {
 
 const postFields = ['id', 'title', 'content', 'createdAt', 'authorId', 'authorName'];
 const userFields = ['id', 'displayName', 'username', 'password', 'role', 'createdAt'];
-const sessionFields = ['userId', 'username', 'displayName', 'role'];
+
 
 /** Check required primitive fields at the untrusted storage boundary.
  * Args:
@@ -112,17 +112,4 @@ export function saveUsers(users) {
   return writeCollection('users', users);
 }
 
-/** Read identity solely for session-aware discovery links.
- * Returns:
- *   A valid local session shape or null; never writes or authenticates.
- * Notes:
- *   Authentication and session mutations belong to the later auth slice.
- */
-export function getDiscoverySession() {
-  try {
-    const session = JSON.parse(localStorage.getItem(STORAGE_KEYS.session));
-    return hasFields(session, sessionFields) && ['admin', 'user'].includes(session.role) ? session : null;
-  } catch {
-    return null;
-  }
-}
+

@@ -1,6 +1,7 @@
 /** Exercise fresh browser-boundary reads, shapes and honest persistence results. */
 import { describe, it, expect, vi } from 'vitest';
-import { getPosts, savePosts, getUsers, saveUsers, getDiscoverySession } from './storage';
+import { getPosts, savePosts, getUsers, saveUsers } from './storage';
+import { getSession } from './auth';
 
 const post = { id: 'p1', title: 'Notes', content: 'Plain text', createdAt: '2026-05-02T12:00:00Z', authorId: 'u1', authorName: 'Mira' };
 const account = { id: 'u1', displayName: 'Mira', username: 'mira', password: 'demo-only', role: 'user', createdAt: '2026-05-01T12:00:00Z' };
@@ -98,29 +99,29 @@ describe('role and discovery identity boundaries', () => {
   });
   it.each(['user', 'admin'])('reads a valid %s session without writing', (role) => {
     localStorage.setItem('writespace_session', JSON.stringify({ ...session, role }));
-    expect(getDiscoverySession()).toEqual({ ...session, role });
+    expect(getSession()).toEqual({ ...session, role });
     expect(localStorage.getItem('writespace_posts')).toBeNull();
   });
   it.each(['{broken', 'null', '[]', '{}', '"session"'])('fails closed on invalid identity %s', (raw) => {
     localStorage.setItem('writespace_session', raw);
-    expect(getDiscoverySession()).toBeNull();
+    expect(getSession()).toBeNull();
     expect(localStorage.getItem('writespace_session')).toBe(raw);
   });
   it.each(Object.keys(session))('fails closed on missing, empty or wrong-type session field %s', (field) => {
     for (const value of [undefined, '', {}, 7]) {
       localStorage.setItem('writespace_session', JSON.stringify({ ...session, [field]: value }));
-      expect(getDiscoverySession()).toBeNull();
+      expect(getSession()).toBeNull();
     }
   });
   it('fails closed on unsupported roles and re-reads changed identity', () => {
     localStorage.setItem('writespace_session', JSON.stringify(session));
-    expect(getDiscoverySession()).toEqual(session);
+    expect(getSession()).toEqual(session);
     localStorage.setItem('writespace_session', JSON.stringify({ ...session, role: 'superuser' }));
-    expect(getDiscoverySession()).toBeNull();
+    expect(getSession()).toBeNull();
   });
   it('fails closed on absent or blocked session storage', () => {
-    expect(getDiscoverySession()).toBeNull();
+    expect(getSession()).toBeNull();
     vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => { throw new Error('blocked'); });
-    expect(getDiscoverySession()).toBeNull();
+    expect(getSession()).toBeNull();
   });
 });

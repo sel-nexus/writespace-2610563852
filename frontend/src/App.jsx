@@ -1,7 +1,11 @@
-/** Resolve only the implemented landing and an honest unknown-route state. */
-import { Link, Route, Routes } from 'react-router-dom';
+/** Resolve public entry, local identity guards, and honest unknown-route content. */
+import { Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import LandingPage from './pages/LandingPage';
-import { getDiscoverySession } from './utils/storage';
+import LoginPage from './pages/LoginPage';
+import { getSession, roleHome } from './utils/auth';
+import { ProtectedRoute } from './components/ProtectedRoute';
+import { Navbar } from './components/Navbar';
+import { PublicNavbar } from './components/PublicNavbar';
 
 /** Render a safe, explicit response for every unimplemented or unknown route.
  * Returns:
@@ -19,15 +23,43 @@ function NotFound() {
   );
 }
 
-/** Select current discovery identity on each route-shell render.
+/** Select fresh local identity on each route transition.
  * Returns:
  *   Single route table without another router or future placeholder pages.
  */
 export default function App() {
+  const location = useLocation();
+  const session = getSession();
+  const authEntry = session ? <Navigate to={roleHome(session)} replace /> : <NotFound />;
   return (
     <div className="min-h-screen bg-slate-50 font-['Helvetica_Neue',Arial,sans-serif] text-slate-800">
+      {location.pathname !== '/' && (session ? <Navbar session={session} /> : <PublicNavbar />)}
       <Routes>
-        <Route path="/" element={<LandingPage session={getDiscoverySession()} />} />
+        <Route path="/" element={<LandingPage session={session} />} />
+        <Route path="/login" element={session ? <Navigate to={roleHome(session)} replace /> : <LoginPage />} />
+        <Route path="/register" element={authEntry} />
+        {['/blogs', '/blog/:id', '/write', '/edit/:id'].map((path) => (
+          <Route
+            key={path}
+            path={path}
+            element={
+              <ProtectedRoute>
+                <NotFound />
+              </ProtectedRoute>
+            }
+          />
+        ))}
+        {['/admin', '/users'].map((path) => (
+          <Route
+            key={path}
+            path={path}
+            element={
+              <ProtectedRoute adminOnly>
+                <NotFound />
+              </ProtectedRoute>
+            }
+          />
+        ))}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </div>
