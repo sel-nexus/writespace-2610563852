@@ -10,12 +10,12 @@ import { getSession, setSession } from '../utils/auth';
 const draft = { 'Display name': ' Mira Chen ', Username: 'mira', Password: ' demo-only ', 'Confirm password': ' demo-only ' };
 const future = { v7_startTransition: true, v7_relativeSplatPath: true };
 
-/** Expose the current router destination for honest unimplemented-page assertions. */
+/** Expose the current router destination for route assertions. */
 function Location() {
   return <output aria-label="Current route">{useLocation().pathname}</output>;
 }
 
-/** Mount the real route shell at registration without inventing a blog feature. */
+/** Mount the real route shell at registration with real feature pages. */
 function renderApp() {
   return render(
     <MemoryRouter initialEntries={['/register']} future={future}>
@@ -47,7 +47,7 @@ describe('RegisterPage', () => {
     expect(within(screen.getByRole('main')).getByRole('link', { name: 'Login' })).toHaveAttribute('href', '/login');
     expect(write).not.toHaveBeenCalled();
   });
-  it('saves account and credential-free identity before navigating to the current not-found blogs route', async () => {
+  it('saves account and credential-free identity before navigating to the real blogs route', async () => {
     const user = userEvent.setup();
     renderApp();
     await fill(user);
@@ -56,7 +56,7 @@ describe('RegisterPage', () => {
     expect(getUsers()[0]).toMatchObject({ displayName: 'Mira Chen', username: 'mira', password: ' demo-only ', role: 'user' });
     expect(getSession()).toEqual({ userId: getUsers()[0].id, displayName: 'Mira Chen', username: 'mira', role: 'user' });
     expect(screen.getByLabelText('Current route')).toHaveTextContent('/blogs');
-    expect(screen.getByRole('heading', { name: 'Page not found' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'All Blogs' })).toBeInTheDocument();
   });
   it.each(Object.keys(draft))('associates only the missing %s field with its alert and retains other values', async (label) => {
     const user = userEvent.setup();

@@ -11,7 +11,7 @@ test('guest registers, reloads persistent records, logs out and signs in with th
   await page.getByLabel('Confirm password', { exact: true }).fill(' demo-only ');
   await page.getByRole('button', { name: 'Register', exact: true }).click();
   await expect(page).toHaveURL(/\/blogs$/);
-  await expect(page.getByRole('heading', { name: 'Page not found' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'All Blogs' })).toBeVisible();
   const records = await page.evaluate(() => ({
     users: JSON.parse(localStorage.getItem('writespace_users')),
     session: JSON.parse(localStorage.getItem('writespace_session')),

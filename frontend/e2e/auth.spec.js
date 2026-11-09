@@ -52,6 +52,7 @@ test('mobile stored author signs in, follows role links and uses account logout'
   await expect(nav.getByRole('link', { name: 'Users' })).toHaveCount(0);
   await nav.getByRole('link', { name: 'Write', exact: true }).click();
   await expect(page).toHaveURL(/\/write$/);
+  await expect(page.getByRole('heading', { name: 'Write a Post' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Open menu' })).toHaveAttribute('aria-expanded', 'false');
   await page.getByRole('button', { name: 'Open menu' }).click();
   await page.getByRole('button', { name: 'Account for Demo Writer', exact: true }).click();
@@ -86,7 +87,7 @@ for (const path of ['/admin', '/users']) {
     });
     await page.goto(path);
     await expect(page).toHaveURL(/\/blogs$/);
-    await expect(page.getByRole('heading', { name: 'Page not found' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'All Blogs' })).toBeVisible();
     expect(browserErrors).toEqual([]);
   });
 }
@@ -102,7 +103,7 @@ for (const role of ['user', 'admin']) {
       }, role);
       await page.goto(path);
       await expect(page).toHaveURL(role === 'admin' ? /\/admin$/ : /\/blogs$/);
-      await expect(page.getByRole('heading', { name: 'Page not found' })).toBeVisible();
+      await expect(page.getByRole('heading', { name: role === 'admin' ? 'Page not found' : 'All Blogs' })).toBeVisible();
       expect(browserErrors).toEqual([]);
     });
   }

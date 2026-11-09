@@ -5,6 +5,7 @@ import { Pencil } from 'lucide-react';
 import { Avatar } from './Avatar';
 import { sessionPropType } from './PublicNavbar';
 import { formatPostDate, getExcerpt } from '../utils/posts';
+import { canManagePost } from '../utils/permissions';
 
 const accents = ['border-t-indigo-500', 'border-t-violet-500', 'border-t-pink-500', 'border-t-teal-500'];
 
@@ -18,7 +19,7 @@ const accents = ['border-t-indigo-500', 'border-t-violet-500', 'border-t-pink-50
  *   Semantic preview article with reader and optional edit links.
  */
 export function BlogCard({ post, index = 0, session = null, authorRole = 'user' }) {
-  const canEdit = session && (session.role === 'admin' || session.userId === post.authorId);
+  const canEdit = canManagePost(session, post);
   return (
     <article className={`flex flex-col gap-5 rounded-lg border border-t-4 border-slate-200 bg-white p-6 ${accents[index % 4]}`}>
       <h3 className="break-words font-[Georgia,serif] text-2xl leading-tight">

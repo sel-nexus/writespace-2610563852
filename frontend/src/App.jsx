@@ -3,6 +3,9 @@ import { Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import Home from './pages/Home';
+import ReadBlog from './pages/ReadBlog';
+import WriteBlog from './pages/WriteBlog';
 import { getSession, roleHome } from './utils/auth';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { Navbar } from './components/Navbar';
@@ -39,13 +42,16 @@ export default function App() {
         <Route path="/" element={<LandingPage session={session} />} />
         <Route path="/login" element={session ? <Navigate to={roleHome(session)} replace /> : <LoginPage />} />
         <Route path="/register" element={authEntry} />
-        {['/blogs', '/blog/:id', '/write', '/edit/:id'].map((path) => (
+        {[
+          ['/blogs', <Home />], ['/blog/:id', <ReadBlog />],
+          ['/write', <WriteBlog key="create" />], ['/edit/:id', <WriteBlog key={location.pathname} />],
+        ].map(([path, page]) => (
           <Route
             key={path}
             path={path}
             element={
               <ProtectedRoute>
-                <NotFound />
+                {page}
               </ProtectedRoute>
             }
           />
