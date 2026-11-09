@@ -2,6 +2,7 @@
 import { Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 import { getSession, roleHome } from './utils/auth';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { Navbar } from './components/Navbar';
@@ -30,7 +31,7 @@ function NotFound() {
 export default function App() {
   const location = useLocation();
   const session = getSession();
-  const authEntry = session ? <Navigate to={roleHome(session)} replace /> : <NotFound />;
+  const authEntry = session ? <Navigate to={roleHome(session)} replace /> : <RegisterPage />;
   return (
     <div className="min-h-screen bg-slate-50 font-['Helvetica_Neue',Arial,sans-serif] text-slate-800">
       {location.pathname !== '/' && (session ? <Navbar session={session} /> : <PublicNavbar />)}

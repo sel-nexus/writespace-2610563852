@@ -118,6 +118,7 @@ describe('Login', () => {
     renderApp();
     await user.click(screen.getByRole('link', { name: 'Create an account' }));
     expect(screen.getByLabelText('Current route')).toHaveTextContent('/register');
+    expect(screen.getByRole('heading', { name: 'Register' })).toBeInTheDocument();
     expect(localStorage.getItem('writespace_users')).toBeNull();
     await user.click(screen.getByRole('link', { name: 'Back to Home' }));
     expect(screen.getByRole('heading', { name: 'WriteSpace', level: 1 })).toBeInTheDocument();

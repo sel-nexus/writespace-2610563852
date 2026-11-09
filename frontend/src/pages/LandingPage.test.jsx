@@ -178,7 +178,7 @@ describe('actual route shell', () => {
     );
     expect(screen.queryByRole('link', { name: 'Go to Dashboard' })).not.toBeInTheDocument();
   });
-  it.each(['/unknown', '/register'])(
+  it.each(['/unknown'])(
     'honestly rejects unimplemented path %s and returns home by clicking', async (path) => {
     const user = userEvent.setup();
     render(

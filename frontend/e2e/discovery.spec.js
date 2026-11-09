@@ -46,6 +46,8 @@ test('mobile guest opens navigation, follows entry links and sees exact corrupt-
   await expect(page.getByRole('button', { name: 'Open menu' })).toHaveAttribute('aria-expanded', 'false');
   await page.getByRole('link', { name: 'Get Started Free' }).click();
   await expect(page).toHaveURL(/\/register$/);
+  await expect(page.getByRole('heading', { name: 'Register' })).toBeVisible();
+  await expect(page.getByLabel('Display name', { exact: true })).toBeVisible();
   await page.getByRole('link', { name: 'Back to Home' }).click();
   await page.evaluate(() => localStorage.setItem('writespace_posts', '{broken'));
   await page.reload();
