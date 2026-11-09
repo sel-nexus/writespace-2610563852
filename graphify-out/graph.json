@@ -33,6 +33,14 @@
       "_origin": "ast"
     },
     {
+      "id": "frontend_e2e_delivery_spec",
+      "label": "delivery.spec.js",
+      "file_type": "code",
+      "source_file": "frontend/e2e/delivery.spec.js",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
       "id": "frontend_e2e_discovery_spec",
       "label": "discovery.spec.js",
       "file_type": "code",
@@ -577,6 +585,22 @@
       "community": 10
     },
     {
+      "id": "frontend_scripts_preflight",
+      "label": "preflight.js",
+      "file_type": "code",
+      "source_file": "frontend/scripts/preflight.js",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "frontend_scripts_preflight_results",
+      "label": "results",
+      "file_type": "code",
+      "source_file": "frontend/scripts/preflight.js",
+      "source_location": "L8",
+      "_origin": "ast"
+    },
+    {
       "id": "frontend_src_app",
       "label": "App.jsx",
       "file_type": "code",
@@ -937,7 +961,7 @@
       "label": "LandingPage()",
       "file_type": "code",
       "source_file": "frontend/src/pages/LandingPage.jsx",
-      "source_location": "L23",
+      "source_location": "L26",
       "_callable": true,
       "_origin": "ast",
       "community": 4
@@ -2093,6 +2117,28 @@
       "_origin": "ast"
     },
     {
+      "source": "frontend_e2e_delivery_spec",
+      "target": "frontend_e2e_fixtures",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/e2e/delivery.spec.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "frontend_e2e_delivery_spec",
+      "target": "frontend_e2e_fixtures_test",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/e2e/delivery.spec.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
       "source": "frontend_e2e_discovery_spec",
       "target": "frontend_e2e_fixtures",
       "relation": "imports_from",
@@ -2779,6 +2825,27 @@
       "confidence": "EXTRACTED",
       "source_file": "frontend/playwright.config.js",
       "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "frontend_scripts_preflight",
+      "target": "ref_playwright_test",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/scripts/preflight.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "frontend_scripts_preflight",
+      "target": "frontend_scripts_preflight_results",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/scripts/preflight.js",
+      "source_location": "L8",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -4375,6 +4442,17 @@
     },
     {
       "source": "frontend_src_pages_landingpage",
+      "target": "frontend_src_utils_storage_getusers",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/LandingPage.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "frontend_src_pages_landingpage",
       "target": "frontend_src_utils_posts",
       "relation": "imports_from",
       "context": "import",
@@ -4411,7 +4489,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "frontend/src/pages/LandingPage.jsx",
-      "source_location": "L23",
+      "source_location": "L26",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -8205,7 +8283,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "frontend/src/pages/LandingPage.jsx",
-      "source_location": "L24",
+      "source_location": "L27",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -8216,7 +8294,18 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "frontend/src/pages/LandingPage.jsx",
-      "source_location": "L24",
+      "source_location": "L27",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "frontend_src_pages_landingpage_landingpage",
+      "target": "frontend_src_utils_storage_getusers",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/LandingPage.jsx",
+      "source_location": "L28",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -9032,7 +9121,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "frontend/src/pages/LandingPage.jsx",
-      "source_location": "L28",
+      "source_location": "L32",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -9044,7 +9133,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "frontend/src/pages/LandingPage.jsx",
-      "source_location": "L70",
+      "source_location": "L74",
       "weight": 1.0,
       "_origin": "ast"
     },
@@ -9326,10 +9415,10 @@
     }
   ],
   "metadata": {
-    "built_at": "2026-11-09T12:31:36.365790+00:00",
+    "built_at": "2026-11-09T13:03:41.863246+00:00",
     "version": "graph_update-v1",
     "codebase_root": "C:\\artifacts-v2\\T0132PcJVCRTV000409112610563852\\developer",
     "force": true,
-    "files_scanned": 51
+    "files_scanned": 54
   }
 }
