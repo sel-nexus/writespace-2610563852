@@ -60,6 +60,6 @@ test('author publishes then Admin enters from landing, edits, cancels deletion a
   await page.getByRole('link', { name: 'Dashboard', exact: true }).click();
   await page.getByRole('link', { name: 'Manage Users' }).click();
   await expect(page).toHaveURL(/\/users$/);
-  await expect(page.getByRole('heading', { name: 'Page not found' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'User Management' })).toBeVisible();
   expect(browserErrors).toEqual([]);
 });

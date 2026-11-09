@@ -201,7 +201,7 @@ describe('AdminDashboard', () => {
     expect(screen.getByRole('link', { name: 'Admin revision' })).toBeInTheDocument();
   });
 
-  it('enters from landing and follows shortcuts leaving users honestly unavailable', async () => {
+  it('enters from landing and follows shortcuts to account management', async () => {
     setSession(admin);
     mount('/');
     const user = userEvent.setup();
@@ -211,7 +211,7 @@ describe('AdminDashboard', () => {
     expect(screen.getByRole('heading', { name: 'Write a Post' })).toBeInTheDocument();
     await user.click(screen.getByRole('link', { name: 'Dashboard', exact: true }));
     await user.click(screen.getByRole('link', { name: 'Manage Users' }));
-    expect(screen.getByRole('heading', { name: 'Page not found' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'User Management' })).toBeInTheDocument();
     expect(getPosts()).toEqual([]);
     expect(getUsers()).toEqual([]);
   });

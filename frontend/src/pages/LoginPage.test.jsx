@@ -135,7 +135,7 @@ describe('route matrix', () => {
         const destination = !role ? '/login' : role === 'user' && ['/admin', '/users'].includes(path) ? '/blogs' : path;
         expect(screen.getByLabelText('Current route')).toHaveTextContent(destination);
         const heading = !role ? 'Login' : destination === '/blogs' ? 'All Blogs'
-          : path === '/admin' ? 'Admin Dashboard' : path === '/users' ? 'Page not found'
+          : path === '/admin' ? 'Admin Dashboard' : path === '/users' ? 'User Management'
             : path === '/write' ? 'Write a Post' : 'Post not found';
         expect(screen.getByRole('heading', { name: heading })).toBeInTheDocument();
         expect(write).not.toHaveBeenCalled();

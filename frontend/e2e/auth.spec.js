@@ -29,6 +29,7 @@ test('guest enters from landing, corrects invalid login, and logs Admin out with
   await page.reload();
   await page.getByRole('link', { name: 'Users', exact: true }).click();
   await expect(page).toHaveURL(/\/users$/);
+  await expect(page.getByRole('heading', { name: 'User Management' })).toBeVisible();
   await page.getByRole('button', { name: 'Account for Admin', exact: true }).click();
   await page.getByRole('button', { name: 'Logout' }).click();
   await expect(page).toHaveURL(/\/login$/);
