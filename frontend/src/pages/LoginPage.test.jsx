@@ -66,7 +66,7 @@ describe('Login', () => {
     await login(user, 'mira', 'demo-only');
     expect(getSession()).toEqual({ ...session, role });
     expect(screen.getByLabelText('Current route')).toHaveTextContent(role === 'admin' ? '/admin' : '/blogs');
-    expect(screen.getByRole('heading', { name: role === 'admin' ? 'Page not found' : 'All Blogs' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: role === 'admin' ? 'Admin Dashboard' : 'All Blogs' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Mira/ })).toBeInTheDocument();
   });
   it('logs fixed Admin in before a colliding stored account', async () => {
@@ -135,7 +135,8 @@ describe('route matrix', () => {
         const destination = !role ? '/login' : role === 'user' && ['/admin', '/users'].includes(path) ? '/blogs' : path;
         expect(screen.getByLabelText('Current route')).toHaveTextContent(destination);
         const heading = !role ? 'Login' : destination === '/blogs' ? 'All Blogs'
-          : path === '/write' ? 'Write a Post' : path.startsWith('/blog/') || path.startsWith('/edit/') ? 'Post not found' : 'Page not found';
+          : path === '/admin' ? 'Admin Dashboard' : path === '/users' ? 'Page not found'
+            : path === '/write' ? 'Write a Post' : 'Post not found';
         expect(screen.getByRole('heading', { name: heading })).toBeInTheDocument();
         expect(write).not.toHaveBeenCalled();
       },

@@ -6,6 +6,7 @@ import RegisterPage from './pages/RegisterPage';
 import Home from './pages/Home';
 import ReadBlog from './pages/ReadBlog';
 import WriteBlog from './pages/WriteBlog';
+import AdminDashboard from './pages/AdminDashboard';
 import { getSession, roleHome } from './utils/auth';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { Navbar } from './components/Navbar';
@@ -62,7 +63,7 @@ export default function App() {
             path={path}
             element={
               <ProtectedRoute adminOnly>
-                <NotFound />
+                {path === '/admin' ? <AdminDashboard /> : <NotFound />}
               </ProtectedRoute>
             }
           />

@@ -156,6 +156,7 @@ describe('RegisterPage', () => {
     renderApp();
     expect(screen.getByLabelText('Current route')).toHaveTextContent(role === 'admin' ? '/admin' : '/blogs');
     expect(screen.queryByRole('heading', { name: 'Register' })).not.toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: role === 'admin' ? 'Admin Dashboard' : 'All Blogs' })).toBeInTheDocument();
     expect(write).not.toHaveBeenCalled();
   });
   it('returns to discovery through the form home link without creating an account', async () => {

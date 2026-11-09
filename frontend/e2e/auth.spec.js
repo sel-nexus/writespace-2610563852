@@ -22,7 +22,7 @@ test('guest enters from landing, corrects invalid login, and logs Admin out with
   await page.getByLabel('Password', { exact: true }).fill('admin');
   await page.getByRole('button', { name: 'Login', exact: true }).click();
   await expect(page).toHaveURL(/\/admin$/);
-  await expect(page.getByRole('heading', { name: 'Page not found' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Admin Dashboard' })).toBeVisible();
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem('writespace_session')))).toEqual({
     userId: 'default-admin', username: 'admin', displayName: 'Admin', role: 'admin',
   });
@@ -103,7 +103,7 @@ for (const role of ['user', 'admin']) {
       }, role);
       await page.goto(path);
       await expect(page).toHaveURL(role === 'admin' ? /\/admin$/ : /\/blogs$/);
-      await expect(page.getByRole('heading', { name: role === 'admin' ? 'Page not found' : 'All Blogs' })).toBeVisible();
+      await expect(page.getByRole('heading', { name: role === 'admin' ? 'Admin Dashboard' : 'All Blogs' })).toBeVisible();
       expect(browserErrors).toEqual([]);
     });
   }
